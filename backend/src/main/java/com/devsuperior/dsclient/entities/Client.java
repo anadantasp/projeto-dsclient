@@ -85,6 +85,10 @@ public class Client implements Serializable {
 	public void setBirthDate(String birthDate) {
 		this.birthDate = Instant.parse(birthDate);
 	}
+	
+	public void setBirthDate(Instant birthDate) {
+		this.birthDate = birthDate;
+	}
 
 	public Integer getChildren() {
 		return children;
