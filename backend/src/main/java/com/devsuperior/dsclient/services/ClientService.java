@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +18,12 @@ import com.devsuperior.dsclient.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class ClientService {
-	
+
 	@Autowired
 	private ClientRepository repository;
-	
+
 	@Transactional(readOnly = true)
-	public List<ClientDTO> findAll(){  
+	public List<ClientDTO> findAll() {
 		List<Client> list = repository.findAll();
 		return list.stream().map(x -> new ClientDTO(x)).collect(Collectors.toList());
 	}
@@ -44,7 +45,7 @@ public class ClientService {
 		entity.setChildren(dto.getChildren());
 		entity = repository.save(entity);
 		return new ClientDTO(entity);
-		
+
 	}
 
 	@Transactional
@@ -58,11 +59,17 @@ public class ClientService {
 			entity.setChildren(dto.getChildren());
 			entity = repository.save(entity);
 			return new ClientDTO(entity);
-		}catch(EntityNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id " + id + " not found");
 		}
-		
-		
+	}
+
+	public void delete(Long id) {
+		try {
+			repository.deleteById(id);
+		}catch(EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException("Id " + id + " not found");
+		}
 		
 	}
 
